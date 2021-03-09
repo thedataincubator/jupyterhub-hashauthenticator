@@ -1,6 +1,14 @@
 To run tests:
   python ./setup.py tests
 
-To upload to pypi:
-  python setup.py sdist upload -r pypi
+Setup for uploads:
+- Install wheel and twine:
+    python -m pip install wheel twine
+- Get upload token from PyPI, add to ~/.pypirc (see
+  https://packaging.python.org/guides/distributing-packages-using-setuptools/#create-an-account)
 
+To upload to pypi:
+  python setup.py sdist
+  python setpy.py bdist_wheel --universal
+  twine check dist/*
+  twine upload dist/*
