@@ -81,6 +81,9 @@ def make_hash_authenticator(class_name, AdminAuthenticator=None):
 
         retval['name'] += self.admin_suffix
         retval['admin'] = True
+        if self.allowed_users:
+          self.allowed_users.add(retval['name'])
+        # The whitelist is deprecated, but we'll support it if present.
         if self.whitelist:
           self.whitelist.add(retval['name'])
         return retval
