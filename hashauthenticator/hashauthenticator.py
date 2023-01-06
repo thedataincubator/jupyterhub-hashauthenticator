@@ -63,6 +63,11 @@ def make_hash_authenticator(class_name, AdminAuthenticator=None):
       # Show the username/password entry
       return ''
 
+    def login_url(self, base_url):
+      # This is where the username and password get sent, so send it where the base
+      # Authenticator will handle them (and therefore call our authenticate method).
+      return Authenticator.login_url(self, base_url)
+
     def get_password(self, username):
       return generate_password_digest(username, self.secret_key, self.password_length)
 
@@ -92,7 +97,7 @@ def make_hash_authenticator(class_name, AdminAuthenticator=None):
       password = data['password']
 
       if admin_auth and username.endswith(self.admin_suffix):
-        handler.redirect(url_concat(self.login_url(handler.hub.base_url),
+        handler.redirect(url_concat(super().login_url(handler.hub.base_url),
                                     {'next': handler.get_argument('next', '')}))
         raise Finish
 
