@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='jupyterhub-hashauthenticator',
-    version='0.4.2',
+    version='0.5.0',
     description='Hashed Password Authenticator for JupyterHub',
     url='https://github.com/thedataincubator/jupyterhub-hashauthenticator',
     author='Petko Minkov',
