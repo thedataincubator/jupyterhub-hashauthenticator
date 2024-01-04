@@ -9,6 +9,6 @@ Setup for uploads:
 
 To upload to pypi:
   python setup.py sdist
-  python setpy.py bdist_wheel --universal
+  python setup.py bdist_wheel --universal
   twine check dist/*
   twine upload dist/*
