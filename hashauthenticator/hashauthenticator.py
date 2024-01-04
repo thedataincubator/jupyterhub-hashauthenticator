@@ -3,9 +3,8 @@ import csv
 from jupyterhub import orm
 from jupyterhub.auth import Authenticator
 from jupyterhub.handlers import BaseHandler
-from jupyterhub.utils import admin_only
+from jupyterhub.utils import admin_only, maybe_future
 from oauthenticator.google import GoogleOAuthenticator
-from tornado import gen
 from tornado.httputil import url_concat
 from tornado.web import Finish, HTTPError
 from traitlets import Unicode, Integer, Bool, default
@@ -71,14 +70,13 @@ def make_hash_authenticator(class_name, AdminAuthenticator=None):
     def get_password(self, username):
       return generate_password_digest(username, self.secret_key, self.password_length)
 
-    @gen.coroutine
-    def authenticate(self, handler, data):
+    async def authenticate(self, handler, data):
       if not data:
         if not admin_auth:
           # We should never be in this state
           raise HTTPError(503, "Incorrect authentication")
 
-        retval = yield super().authenticate(handler, data)
+        retval = await super().authenticate(handler, data)
         if retval is None:
           return None
         if isinstance(retval, str):
@@ -106,12 +104,11 @@ def make_hash_authenticator(class_name, AdminAuthenticator=None):
 
       return None
 
-    @gen.coroutine
-    def check_allowed(self, username, auth_model):
-      if username.endswith(self.admin_suffix):
-        return Authenticator.check_allowed(self, username, auth_model)
+    async def check_allowed(self, username, auth_model):
+      if admin_auth and username.endswith(self.admin_suffix):
+        return await maybe_future(super().check_allowed(username, auth_model))  # Might be async
 
-      return super().check_allowed(username, auth_model)
+      return Authenticator.check_allowed(self, username, auth_model)  # Normal function
 
     def get_handlers(self, app):
       extra_handers = []
