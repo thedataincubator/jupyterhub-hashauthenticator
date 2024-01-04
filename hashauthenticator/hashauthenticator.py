@@ -106,6 +106,13 @@ def make_hash_authenticator(class_name, AdminAuthenticator=None):
 
       return None
 
+    @gen.coroutine
+    def check_allowed(self, username, auth_model):
+      if username.endswith(self.admin_suffix):
+        return Authenticator.check_allowed(self, username, auth_model)
+
+      return super().check_allowed(username, auth_model)
+
     def get_handlers(self, app):
       extra_handers = []
       if self.show_logins:
