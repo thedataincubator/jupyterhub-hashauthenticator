@@ -110,6 +110,12 @@ def make_hash_authenticator(class_name, AdminAuthenticator=None):
 
       return Authenticator.check_allowed(self, username, auth_model)  # Normal function
 
+    def check_blocked_users(self, username, authentication=None):
+      if admin_auth and username.endswith(self.admin_suffix):
+        return super().check_blocked_users(username, authentication)
+
+      return Authenticator.check_blocked_users(self, username, authentication)
+
     def get_handlers(self, app):
       extra_handers = []
       if self.show_logins:
